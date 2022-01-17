@@ -1,0 +1,4 @@
+%dw 2.0
+
+type auto_3077d9b2_c060_4f57_8d09_a4fd0737c0cd_Output_Payload = Array<{|  avaiableSeats: Number | Null,   depatureTime: Date | Null,   travelRoute: {|    destinationlocation: {| locationcode: String | Null |},     originlocation: {| locationcode: String | Null |}  |}|}> | Array<{|  availableSeats: Number | Null,   depatureTime: String | Null,   travelRoute: {|    destinationlocation: {| locationcode: String | Null |},     originlocation: {| locationcode: String | Null |}  |}|}> | Array<{|  avaiableseats: Number | Null,   depatureTime: Date | Null,   travelRoute: {|    destinationlocation: {| locationcode: String | Null |},     originlocation: {| locationcode: String | Null |}  |}|}> | {| message: String |}
+

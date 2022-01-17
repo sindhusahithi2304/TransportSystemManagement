@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="getRoutesFlow" doc:id="e9d70693-c3aa-4fc5-8e86-2b45fd112c1c" >
+		<choice doc:name="Choice" doc:id="3a9fb022-1d96-400f-8f43-fa961e7ab9bf" >
+			<when expression='#[attributes.uriParams.transportType == "land"]'>
+				<db:select doc:name="land" doc:id="f00ecc28-830f-468a-8f65-988161fa9cb9" config-ref="Database_Config">
+					<db:sql ><![CDATA[select * from travelontip.land;]]></db:sql>
+				</db:select>
+				<ee:transform doc:name="mappingOrigin-And-Destination" doc:id="b4c284ed-9b2f-436f-bc46-3622eb5680a1" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload map {
+	"originLocation": {
+		"locationCode": $.departureLocationCode,
+		
+	},
+	"destinationLoc": {
+		"locationCode": $.destinationLocationCode,
+		
+	}
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</when>
+			<when expression='#[attributes.uriParams.transportType == "air"]'>
+				<db:select doc:name="Air" doc:id="d2e04467-543f-4213-8c05-ad3eb72c8aee" config-ref="Database_Config">
+					<db:sql ><![CDATA[select * from travelontip.Air;]]></db:sql>
+				</db:select>
+				<ee:transform doc:name="mappingOrigin-And-Destination" doc:id="d483668c-e381-4059-87fc-e0b560c31433" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload map {
+	"originLocation": {
+		"locationCode": $.departureLocationCode,
+	},
+	"destinationLoc": {
+		"locationCode": $.destinationLocationCode,
+	}
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</when>
+			<when expression='#[attributes.uriParams.transportType == "sea"]'>
+				<db:select doc:name="Sea" doc:id="d90a3f9f-5d21-4508-a8ac-55415d8f947e" config-ref="Database_Config">
+					<db:sql ><![CDATA[select * from travelontip.sea;]]></db:sql>
+				</db:select>
+				<ee:transform doc:name="mappingOrigin-And-Destination" doc:id="5b8a510a-06f8-45a2-94fb-08fea40406ec" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[
+%dw 2.0
+output application/json
+---
+payload map {
+	"originLocation": {
+		"locationCode": $.departureLocationCode,
+	},
+	"destinationLoc": {
+		"locationCode": $.destinationLocationCode,
+	}
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</when>
+			<otherwise >
+				<ee:transform doc:name="Transform Message" doc:id="9c86b25f-9f71-4038-b3ed-8cb485d3fa01" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+"messsage": "No data found"
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</otherwise>
+		</choice>
+	</flow>
+</mule>

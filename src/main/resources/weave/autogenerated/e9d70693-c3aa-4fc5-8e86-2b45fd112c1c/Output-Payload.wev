@@ -1,0 +1,4 @@
+%dw 2.0
+
+type auto_e9d70693_c3aa_4fc5_8e86_2b45fd112c1c_Output_Payload = Array<{|  originLocation: {| locationCode: String | Null |},   destinationLoc: {| locationCode: String | Null |}|}> | {| messsage: String |}
+
