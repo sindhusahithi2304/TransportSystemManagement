@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="getroutes-exp-webFlow" doc:id="4d97032a-c439-4abc-abbc-39ab86351540" >
+		<http:request method="GET" doc:name="getRoutesConfig" doc:id="9cc5ea71-56bd-4ff4-bc33-711793a56654" path="/api/bookings/{transportType}/routes" config-ref="HTTP_Request_configuration">
+			<http:headers ><![CDATA[#[output application/java
+---
+{
+	"transactionId" : attributes.headers.transactionId
+}]]]></http:headers>
+			<http:uri-params ><![CDATA[#[output application/java
+---
+{
+	"transportCompany" : attributes.queryParams.companyName default "travelontrip",
+	"transportType" : attributes.uriParams.transportType
+}]]]></http:uri-params>
+		</http:request>
+		<ee:transform doc:name="incomingPayloadFromgetRoutes" doc:id="bb61ddc9-41c0-417a-b65c-bb9cf5bb6f21" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="infoLogRequest" doc:id="1daf676e-3e86-43d2-9e40-f434c073bc0b" />
+	</flow>
+</mule>
