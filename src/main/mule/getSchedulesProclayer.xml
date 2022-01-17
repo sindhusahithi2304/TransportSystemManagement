@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="getSchedulesProclayerFlow" doc:id="b257bf72-ace7-443f-b80b-09acc34a87c0" >
+		<scatter-gather doc:name="Scatter-Gather" doc:id="af54e4a2-78fb-4107-a9bb-dc64ff19b770" >
+			<route >
+				<http:request method="GET" doc:name="travelontip" doc:id="57a2e8a3-f382-4283-a97f-93e6ddc92067" path="api/{transportType}/{transportCompany}/schedules" config-ref="travel-on-tipHTTP_Request_configuration2">
+			<http:headers><![CDATA[#[output application/java
+---
+{
+	"transactionId" : attributes.headers.transactionId
+}]]]></http:headers>
+			<http:uri-params><![CDATA[#[output application/json
+---
+{
+	"transportCompany" : attributes.queryParams.companyName default "travelontip",
+	"transportType" : attributes.uriParams.transportType
+}]]]></http:uri-params>
+			<http:query-params><![CDATA[#[output application/json
+---
+{
+	"destinationLocationCode": attributes.queryParams.destinationLocationCode,
+	"departureLocationCode": attributes.queryParams.departureLocationCode
+}]]]></http:query-params>
+		</http:request>
+				<ee:transform doc:name="Transform Message" doc:id="50825461-0f20-4cd0-a067-84ecbe356210">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+				<logger level="INFO" doc:name="Logger" doc:id="a980d0ce-6db8-45ff-8d76-432916afac02" message="#[payload]" />
+			</route>
+			<route >
+				<http:request method="GET" doc:name="fastGo" doc:id="36833744-d97b-40ba-a7f2-0123ad315e44" config-ref="fastGoHTTP_Request_configuration3" path="/api/{transportType}/{transportCompany}/schedules">
+			<http:headers><![CDATA[#[output application/java
+---
+{
+	"transactionId" : attributes.headers.transactionId
+}]]]></http:headers>
+			<http:uri-params><![CDATA[#[output application/json
+---
+{
+	"transportCompany" : attributes.queryParams.companyName default "fastGo",
+	"transportType" : attributes.uriParams.transportType
+}]]]></http:uri-params>
+			<http:query-params><![CDATA[#[output application/json
+---
+{
+	"destinationLocationCode": attributes.queryParams.destinationLocationCode,
+	"departureLocationCode": attributes.queryParams.departureLocationCode
+}]]]></http:query-params>
+		</http:request>
+				<ee:transform doc:name="Transform Message" doc:id="baff5215-5c59-47f4-b66b-ec97d0cf8df9">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+				<logger level="INFO" doc:name="Logger" doc:id="8d62404d-b170-4d72-84c1-db8cc095b99f" message="#[payload]" />
+			</route>
+		</scatter-gather>
+		<ee:transform doc:name="Transform Message" doc:id="9f3c07e1-ff87-4fce-9109-010bd2e65988">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload..payload]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+	</flow>
+</mule>

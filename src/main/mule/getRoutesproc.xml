@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="getRoutesProc" doc:id="de8db832-38b9-457a-ab57-faa9488413c9" >
+		<scatter-gather doc:name="Scatter-Gather" doc:id="2445b03f-7542-4185-9fc5-3e1bb7bd87cb" >
+			<route >
+				<http:request method="GET" doc:name="travelontip" doc:id="65982288-0a22-4fca-a91a-5c4bc856deee" path="/api/{transportType}/{transportCompany}/routes" config-ref="travel-on-tipHTTP_Request_configuration2">
+			<http:headers><![CDATA[#[output application/java
+---
+{
+	"transactionId" : attributes.headers.transactionId
+}]]]></http:headers>
+			<http:uri-params><![CDATA[#[{
+	"transportType": attributes.uriParams.transportType,
+	"transportCompany": attributes.queryParams.companyName default "travelontip"
+}]]]></http:uri-params>
+		</http:request>
+				<ee:transform doc:name="Transform Message" doc:id="44aae767-140d-4bd9-af60-6f6324ca3240">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+				<logger level="INFO" doc:name="Logger" doc:id="e4a39a0d-19ce-4a5a-abb9-dd70b1021906" message="#[payload]"/>
+			</route>
+			<route >
+				<http:request method="GET" doc:name="fastGo" doc:id="b546df06-f55c-4bb3-9b76-e480c01d3a09" path="/api/{transportType}/{transportCompany}/routes" config-ref="fastGoHTTP_Request_configuration3">
+			<http:headers><![CDATA[#[output application/java
+---
+{
+	"transactionId" : attributes.headers.transactionId
+}]]]></http:headers>
+			<http:uri-params><![CDATA[#[{
+	"transportType": attributes.uriParams.transportType,
+	"transportCompany": attributes.queryParams.companyName default "fastGo"
+}]]]></http:uri-params>
+		</http:request>
+				<ee:transform doc:name="Transform Message" doc:id="e7f92bef-5316-45fc-8887-cc9bc63ff79b">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+				<logger level="INFO" doc:name="Logger" doc:id="f34e9dcc-31a3-4be6-a17c-4753db9ee9e4" message="#[payload]"/>
+			</route>
+		</scatter-gather>
+		<ee:transform doc:name="Transform Message" doc:id="357ac760-c89d-401b-ba96-5d5d351a6542" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload..payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>
