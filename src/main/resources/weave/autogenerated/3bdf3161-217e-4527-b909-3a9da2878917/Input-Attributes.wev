@@ -1,0 +1,28 @@
+%dw 2.0
+
+type auto_3bdf3161_217e_4527_b909_3a9da2878917_Input_Attributes = {|
+  clientCertificate?: {|
+    publicKey?: {|  |}, 
+    "type"?: String, 
+    encoded?: Binary
+  |}, 
+  headers: {| transactionId: String |}, 
+  listenerPath: String, 
+  method: String, 
+  queryParams: {|
+    companyName?: String, 
+    departureLocation?: String, 
+    destinationLocation?: String, 
+    requestTimezone?: String
+  |}, 
+  queryString: String, 
+  relativePath: String, 
+  remoteAddress: String, 
+  requestPath: String, 
+  requestUri: String, 
+  scheme: String, 
+  uriParams: {| transportType: String |}, 
+  version: String, 
+  localAddress: String
+|}
+

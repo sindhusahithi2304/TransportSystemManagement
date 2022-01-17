@@ -1,0 +1,30 @@
+{
+   "departureSchedules":[
+      {
+         "companyName":"TravelOnTip",
+         "availableSeats":20,
+         "departureDateTime":"2019-04-30T16:41:41",
+         "travelRoute":{
+            "destinationLocation":{
+               "locationDesc":"Beauna Vista Singapore"
+            },
+            "originLocation":{
+               "locationDesc":"Klang Malaysia"
+            }
+         }
+      },
+      {
+         "companyName":"FastGo",
+         "availableSeats":30,
+         "departureDateTime":"2019-04-30T18:41:41",
+         "travelRoute":{
+            "destinationLocation":{
+               "locationDesc":"Klang Malaysia¡"
+            },
+            "originLocation":{
+               "locationDesc":"Beauna Vista Singapore"
+            }
+         }
+      }
+   ]
+}
