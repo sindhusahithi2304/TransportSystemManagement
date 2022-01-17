@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd">
+	<flow name="getRoutesFlow-fastGo" doc:id="715419f4-4aab-4099-8b68-93b41b004e4f" >
+		<choice doc:name="Choice" doc:id="7d71ed97-6660-4337-b857-ce1900483ffa" >
+			<when expression='#[attributes.uriParams.transportType == "land"]' >
+				<db:select doc:name="tsm.land" doc:id="ad62b6a5-1914-4817-ae3f-4e694097653d" config-ref="Database_Config">
+					<db:sql ><![CDATA[select * from tsm.land]]></db:sql>
+				</db:select>
+				<ee:transform doc:name="mappingOrigin-And-Destination" doc:id="64857d53-ca09-4643-b97c-57b675d0f044" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload map {
+	"originLocation": {
+		"locationCode": $.departureLocationCode,
+		
+	},
+	"destinationLoc": {
+		"locationCode": $.destinationLocationCode,
+		
+	}
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</when>
+			<when expression='#[attributes.uriParams.transportType == "air"]' >
+				<db:select doc:id="0824016b-0a8b-45fe-b02f-3cc1cd6380b6" doc:name="tsm.Air" config-ref="Database_Config">
+					<db:sql ><![CDATA[select * from tsm.Air;]]></db:sql>
+				</db:select>
+				<ee:transform doc:name="mappingOrigin-And-Destination" doc:id="0f71a8b3-3ce5-4c35-a67f-6fd486e478f9" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload map {
+	"originLocation": {
+		"locationCode": $.departureLocationCode,
+		
+	},
+	"destinationLoc": {
+		"locationCode": $.destinationLocationCode,
+		
+	}
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</when>
+			<when expression='#[attributes.uriParams.transportType == "sea"]' >
+				<db:select doc:id="22d472ba-1343-4532-87c3-a2da56a3c8ea" doc:name="tsm.Sea" config-ref="Database_Config">
+					<db:sql ><![CDATA[select * from tsm.sea;]]></db:sql>
+				</db:select>
+				<ee:transform doc:name="mappingOrigin-And-Destination" doc:id="bf94c9c6-6564-415a-8395-80e3e2f872a3" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload map {
+	"originLocation": {
+		"locationCode": $.departureLocationCode,
+		
+	},
+	"destinationLoc": {
+		"locationCode": $.destinationLocationCode,
+		
+	}
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</when>
+			<otherwise >
+				<ee:transform doc:name="noDataFound" doc:id="f4175bd4-5f08-44f5-8b5f-73d1fbb03696" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+"messsage": "No data found"
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</otherwise>
+		</choice>
+	</flow>
+</mule>
